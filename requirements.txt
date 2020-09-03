@@ -6,3 +6,4 @@ sklearn
 pillow
 keras
 tensorflow
+Augmentor
