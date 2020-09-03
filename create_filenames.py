@@ -2,15 +2,13 @@ import sys
 import shutil
 from pathlib import Path
 
-if len(sys.argv) < 3:
-    print('formato: <programa> arquivo.txt diretorio_origem diretorio_destino')
+if len(sys.argv) < 2:
+    print('formato: <programa> arquivo.txt diretorio_destino')
     exit()
 
-diretorio_origem = sys.argv[2]
+destino = sys.argv[2]
 
-diretorio_destino = sys.argv[3]
-
-dirpath = Path(sys.argv[3])
+dirpath = Path(destino)
 
 if dirpath.exists() and dirpath.is_dir():
     shutil.rmtree(dirpath)
@@ -32,5 +30,5 @@ for f in files:
     path, label = f.split(' ')
     name, ext = path.split('.')
     newname = name + '_' + label + '.' + ext
-    shutil.copy(diretorio_origem + '/' + path, diretorio_destino + '/' + newname)
+    shutil.copy(path, destino + '/' + newname.split('/')[-1])
     print('newname', newname)

@@ -45,4 +45,4 @@ p.random_distortion(probability=0.3, grid_width=10, grid_height=5, magnitude=8)
 # p.gaussian_distortion(probability=1, grid_width=10, grid_height=5,
 p.zoom(probability=1, min_factor=0.4, max_factor=1)
 p.invert(probability=1)
-p.sample(5000)
+p.sample(15780)
