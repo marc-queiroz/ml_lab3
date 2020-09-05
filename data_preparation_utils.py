@@ -2,7 +2,7 @@ import cv2
 import time
 import numpy as np
 
-from matpltolib.pytplot import plt
+import matplotlib.pyplot as plt
 
 from PIL import Image
 
@@ -14,6 +14,10 @@ from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_v3 import preprocess_input
 
 from keras.preprocessing import image
+
+
+def test():
+    return np.zeros((10, 10))
 
 
 def resize_data(data, size, convert):
