@@ -1,0 +1,19 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem{Lecun98gradient-basedlearning}
+\abntrefinfo{Lecun et al.}{LECUN et al.}{1998}
+{LECUN, Y. et al. Gradient-based learning applied to document recognition. In:
+  \emph{Proceedings of the IEEE}. [S.l.: s.n.], 1998. p. 2278--2324.}
+
+\bibitem{kang2019candidate}
+\abntrefinfo{Kang et al.}{KANG et al.}{2019}
+{KANG, L. et al. Candidate fusion: Integrating language modelling into a
+  sequence-to-sequence handwritten word recognition architecture.
+\emph{arXiv preprint arXiv:1912.10308}, 2019.}
+
+\end{thebibliography}
