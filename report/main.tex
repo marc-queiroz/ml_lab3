@@ -64,20 +64,13 @@
 \begin{document}
 \maketitle
 
-%\begin{abstract}
-
-% Seu resumo do relatório, resumo não é introdução! Por exemplo, o excerto abaixo foi extraído do relatório de alunos do 1s2017, note que ele resume as atividades desenvolvidas e apresentadas no relatório, porém não faz uma introdução exagerada ao assunto abordado.
-%"\textit{Calculamos a partir da montagem de circuitos RC e RLC a resistência interna do osciloscópio, bem como os valores de capacitância dos componentes utilizados. Analisamos as curvas dos circuitos passa-altas, passa-baixas e passa banda, juntamente com seus respectivos diagramas de bode, comparando-as com curvas esperadas fornecidas na literatura sobre o assunto. Utilizando um método baseado em assíndotas, estimamos valores para as frequências de ressonância e de corte, comparando-os com valores experimentais e teóricos}"
-
-%\end{abstract}
-
 \section{Introdução}
 
 A prática do laboratório 3 apresenta uma base de dados de imagens com escritas manuais com os meses do ano. A tarefa consiste em analisar a implementação e treinamento de CNNs e também a geração de imagens utilizando a técnica de \textit{data augmentation} para classificação dessas imagens.
 
-Os códigos fontes utilizados nesse laboratório e a versão mais atual desse relatório pode ser encontrado no GitHub, \url{https://github.com/marc-queiroz/ml_lab3/}.
+Os códigos fontes utilizados nesse laboratório e a versão mais atual desse relatório podem ser encontrados no GitHub, \url{https://github.com/marc-queiroz/ml_lab3/}.
 
-O trabalho está subdivido em seções, as primeiras apresentam as CNNs do trabalho. Uma explicação dos métodos de augumentação também faz parte do trabalho, em seção própria. Apresentadas as CNNs e técnicas utilizas segue-se para os experimentos, neles são apresentadas os testes com e sem augumentação para as duas redes. Em seção própria, é apresentado os resultados dos experimentos. Também foi escolhido duas redes pré-treinadas da ImageNet, Inception v4, VGG16 para realizar os experimentos de (Transfer Learning/Fine-Tuning). Chegando a parte final, com a extração de características utilizando a rede pré-treinada Inception v4. Com a última seção mostrando os resultados do teste com o classificador SVM com kernel radial. 
+O trabalho está subdivido em seções, as primeiras apresentam as CNNs, LeNet-5 e a Outra CNN escolhida. Uma explicação dos métodos utilizados para augumentação de dados está presente em seção própria. Apresentadas as CNNs e as técnicas de augumentação utilizas, segue-se para os experimentos, neles são apresentadas os testes com e sem augumentação para as duas redes. Em seção própria, é apresentado os resultados dos experimentos. Também foi escolhido duas redes pré-treinadas da ImageNet, Inception v4 e VGG16 para realizar os experimentos de (Transfer Learning/Fine-Tuning). Chegando a parte final, utiliza-se a rede pré-treinada Inception v4 para extração de características. Na última sessão é apresentado os experimentos com o classificador SVM, utilizando os dados extraídos com a técnica \textit{feature extraction}. 
 
 \section{LeNet-5}
 
@@ -125,7 +118,7 @@ A CNN escolhida foi adaptada do autor, Francois Lemarchand, no site, \url{https:
 
 Para utilizar essa rede nos experimentos, a sua camada de saída foi alterada para 12 classes, ao invés de 2, originais, listagem \ref{code:modelo_personalizado}.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
+\begin{lstlisting}[caption={Modelo da Outra CNN},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
 dropout_dense_layer = 0.6
 
 model = Sequential()
@@ -168,27 +161,27 @@ model.add(Dense(12))
 model.add(Activation('sigmoid'))
 \end{lstlisting}
 
-A rede é composta por 15 camadas, na qual a camada de OUTPUT foi modificada para 12 classes, incluindo duas camadas de Dropout, que a LeNet não possui.
+A rede é composta por 15 camadas, onde a camada de saída (OUTPUT) foi modificada para 12 classes, incluindo duas camadas de Dropout.
 
 \section{Data Augmentation}\label{section:data_augmented}
 
 Para realização do laboratório, um dos requisitos era a geração de imagens a partir da base de treinamento. 
 
-Para atingir esse objetivo, primeiramente iniciou-se um teste com o exemplo de geração de imagens demostradas em sala de aula, utilizando o próprio gerador do Keras.
+Para atingir esse objetivo, iniciou-se um teste com o exemplo de geração de imagens demostradas em sala de aula, utilizando o próprio gerador do Keras, de acordo com o código fornecido.
 
 O código fonte apresentado em aula, fazia o uso de alguns filtros: \textit{flipped vertical, horizontal, rotation}. Depois de análise dos resultados, observou-se que para escrita manual os filtros apresentados eram de pouca qualidade. 
 
-Iniciando uma pesquisa sobre o assunto, \textit{data augmentation for handwritting}, no Google, descobriu-se várias pesquisas na área, sugerindo uma coleção de filtros comuns a serem utilizados na escrita manual, para geração de dados.
+Iniciando uma pesquisa na Internet sobre o assunto, \textit{data augmentation for handwritting}, descobriu-se várias pesquisas na área, sugerindo uma coleção de filtros comuns a serem utilizados na escrita manual, para geração de dados.
 
 O trabalho de Kang et al.\cite{kang2019candidate}, sugere alguns métodos, entre eles: \textit{shear, rotation} e \textit{elastic transformations}. Após uma pesquisa para transformação das imagens chegou-se ao pacote do python, chamado Augmentor. O projeto encontra-se no GitHub, \url{https://github.com/mdbloice/Augmentor} e pode ser instalado facilmente. Com esse pacote foi possível criar um script capaz de gerar dois conjuntos de dados, a partir das imagens de entrada.
 
-Para lidar com os arquivos de entrada algumas ferramentas precisaram ser criadas, para transferir o label para o nome do arquivo, exemplo, imagem AD00017.jpg, label 1 (Fevereiro), torna-se AD00017\_1.jpg. Com esse procedimento preparado, copia-se todos os arquivos do train.txt para novo diretório, já no novo formato de arquivo, aplica-se o script de augmentation para gerar novas imagens, salvando em um novo diretório que pode ser configurado pelo usuário. A partir desse novo diretório foi necessário criar outra ferramenta para extrair o train-aug.txt no formato dos arquivos de entrada.
+Para lidar com os arquivos de entrada, algumas ferramentas foram criadas. Uma delas transfere o label para o nome do arquivo, exemplo, imagem AD00017.jpg, label 1 (Fevereiro), torna-se AD00017\_1.jpg. Com esse procedimento preparado, copia-se todos os arquivos do train.txt para novo diretório. Com o novo formato de arquivo, aplica-se o script de augumentação para gerar novas imagens. As novas imagens são salvas em novo diretório. Como os novos arquivos possuem o label em seu nome de arquivo, foi necessário criar outra ferramenta para popular o novo arquivo de entrada, que será utilizado para carregar os novos dados gerados. O arquivo pode ser encontrado no repositório do relatório, com o nome train\_aug.txt, incluindo as ferramentas aqui mencionadas.
 
 %Um processo que pode ser comparado ao tempo de pesquisar as melhores configurações para os dados augumentados. Como resultado dessa pesquisa, duas versões do script augmentation.py foram utilizadas.
 
 A biblioteca Augmentor apresenta uma estrutura para geração de arquivos utilizando a imagem original e aplicando uma série de filtros configurados pelo usuário. Cada filtro possui um conjunto de parâmetros ajustáveis, uma das mais interessantes é a capacidade de escolher a probabilidade do filtro ser aplicado a imagem gerada. Dessa forma é possível aumentar a variabilidade das imagens. Abaixo é possível ver o código fonte para a primeira versão das imagens geradas.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:augmented1}, language=Python]
+\begin{lstlisting}[caption={Código utilizado para augumentar as imagens originais},captionpos=b,frame=single,label={code:augmented1}, language=Python]
 p = Augmentor.Pipeline(source_directory=origem.absolute().as_posix(), output_directory=destino.absolute().as_posix())
 p.invert(probability=1)
 p.rotate(probability=1, max_left_rotation=3, max_right_rotation=3)
@@ -201,9 +194,9 @@ p.sample(15780)
 
 A partir da base de entrada, arquivos do train.txt, 1578 arquivos, foram gerados 15780 arquivos.
 
-Na segunda versão do script de geração de dados augmentados, foi incluido a distorção gaussiana, com um probabilide de 30\% de ativação do filtro para cada imagem sendo gerada.
+Na segunda versão do script de geração de dados augumentados, foi incluída a distorção gaussiana, com uma probabilide de 30\% de ativação do filtro para cada imagem sendo gerada.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:augmented2}, language=Python]
+\begin{lstlisting}[caption={Segunda versão do código também aplicado as imagens originais},captionpos=b,frame=single,label={code:augmented2}, language=Python]
 p = Augmentor.Pipeline(source_directory=origem.absolute().as_posix(), output_directory=destino.absolute().as_posix())
 p.invert(probability=1)
 p.rotate(probability=1, max_left_rotation=3, max_right_rotation=3)
@@ -223,9 +216,9 @@ Nas seguintes subseções serão apresentados os experimentos com as CNNs, inclu
 
 \subsection{LeNet-5}
 
-Para encontrar o melhor conjunto de parâmetros para a CNN LeNet-5 com dados originais, procure-se executar algumas variações dos parâmetros. Com objetivo de encontrar o tamanho de imagem de entrada, o tamanho do lote, a quantidade de épocas e a função de ativação da rede.
+Para encontrar o melhor conjunto de parâmetros para a CNN LeNet-5 com dados originais, procurou-se executar algumas variações dos parâmetros. Com objetivo de encontrar o tamanho de imagem de entrada, o tamanho do lote, a quantidade de épocas e a função de ativação da rede.
 
-Será apresentado uma tabela com os valores encontrados para alguns dos experimentos, incluindo a apresentação dos gráficos e matrix confusão para o melhor resultado. Os parâmetros a serem alterados são: batch\_size, epochs, image size e activation.
+Será apresentado uma tabela com os valores encontrados para alguns dos experimentos, incluindo a apresentação dos gráficos e matriz de confusão para o melhor resultado. Os parâmetros a serem alterados são: batch\_size, epochs, image size e activation.
 
 \begin{table}[!htb]
   \centering
@@ -244,6 +237,9 @@ Será apresentado uma tabela com os valores encontrados para alguns dos experime
   \label{tab:experiment_lenet5_noaug_32_reults}
 \end{table}
 
+\clearpage
+
+Os gráficos de acurácia e perda com o melhor desempenho.
 
 \begin{figure}[!htb]
 \centering
@@ -251,18 +247,17 @@ Será apresentado uma tabela com os valores encontrados para alguns dos experime
 \caption{\label{fig:grafico01}Acurácia e perda comparadas com treinamento e validação}
 \end{figure}
 
+O gráfico da matriz de confusão com o melhor desempenho.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{images/cm_lenet5.pdf}
-\caption{\label{fig:grafico01}Matrix de confusão}
+\caption{\label{fig:grafico01}Matriz de confusão}
 \end{figure}
-
-\clearpage
 
 \subsection{Outra CNN}
 
-Será apresentado uma tabela com os valores encontrados para alguns dos experimentos, incluindo a apresentação dos gráficos e matrix confusão para o melhor resultado. Os parâmetros a serem alterados são: batch\_size, epochs, image size e activation.
+Será apresentado uma tabela com os valores encontrados para alguns dos experimentos, incluindo a apresentação dos gráficos e matriz confusão para o melhor resultado. Os parâmetros a serem alterados são: batch\_size, epochs, image size e activation.
 
 \begin{table}[!htb]
   \centering
@@ -282,26 +277,30 @@ Será apresentado uma tabela com os valores encontrados para alguns dos experime
   \label{tab:experiment_simple_cnn_results}
 \end{table}
 
+\clearpage
+
+Os gráficos de acurácia e perda com o melhor desempenho.
+
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=1\textwidth]{images/history_simple_cnn.pdf}
 \caption{\label{fig:grafico01}Acurácia e perda comparadas com treinamento e validação}
 \end{figure}
 
+O gráfico da matriz de confusão com o melhor desempenho.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{images/cm_simple_cnn.pdf}
-\caption{\label{fig:grafico01}Matrix de confusão}
+\caption{\label{fig:grafico01}Matriz de confusão}
 \end{figure}
 
-Esse CNN faz uso de um callback chamado EarlyStop, uma implementação do Keras que utiliza a piora na curva de loss como critério de parada. Apesar das épocas utilizadas serem grandes, a maioria das execuções terminam sem atingir o número limite de épocas.
+Essa CNN faz uso de um callback chamado EarlyStop, uma implementação do Keras que utiliza a piora na curva de loss como critério de parada. Apesar das épocas utilizadas serem grandes, a maioria das execuções terminam sem atingir o número limite de épocas.
 
-\clearpage
 
 \subsection{LeNet-5 com dados augumentados}
 
-A mesma CNN LeNet-5, agora rodando com uma base maior de imagens, geradas pelo processo descrito na seção \ref{section:data_augmented}. A quantidade de imagens utilizadas no treinamento é de 37358. Os resultados podem ser vistos na tabela abaixo.
+A mesma CNN LeNet-5, com uma base de treinos maior, geradas pelo processo descrito na seção \ref{section:data_augmented}. A quantidade de imagens utilizadas no treinamento é de 37358. Os resultados podem ser vistos na tabela abaixo.
 
 \begin{table}[!htb]
   \centering
@@ -315,8 +314,8 @@ A mesma CNN LeNet-5, agora rodando com uma base maior de imagens, geradas pelo p
       \begin{tabular}[c]{@{}l@{}}LeNet-5 aug, batch\_size=64, \\ epochs=14, image=32x32, \\ activation=relu\end{tabular}    & 0.81          & 0.81              & 56.08                           \\ \hline
       \begin{tabular}[c]{@{}l@{}}LeNet-5 aug, batch\_size=32, \\ epochs=14, image=32x32, \\ activation=relu\end{tabular}    & 0.76          & 0.81              & 64.367                           \\ \hline
   \end{tabular}
-  \caption{Resultados para LeNet-5}
-  \label{tab:experiment_lenet5_noaug_32_reults}
+  \caption{Resultados para LeNet-5 com dados augumentados}
+  \label{tab:experiment_lenet5_aug_32_reults}
 \end{table}
 
 Os gráficos de acurácia e perda com o melhor desempenho.
@@ -329,18 +328,18 @@ Os gráficos de acurácia e perda com o melhor desempenho.
 
 O gráfico da matriz de confusão com o melhor desempenho.
 
+\clearpage
+
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{images/cm_lenet5_augmented.pdf}
-\caption{\label{fig:grafico01}Matrix de confusão}
+\caption{\label{fig:grafico01}Matriz de confusão}
 \end{figure}
 
 
-\clearpage
-
 \subsection{Outra CNN com dados augumentados}
 
-Utilizando uma base de imagens com 37358 imagens, sendo 36000 imagens novas, geradas pelo processo descrito na seção \ref{section:data_augmented}.  
+Utilizando uma base de imagens com 37358 imagens, sendo 36000 imagens novas, geradas pelo processo descrito na seção \ref{section:data_augmented}. Os resultados podem ser vistos na tabela abaixo.
 
 \begin{table}[!htb]
   \centering
@@ -351,9 +350,13 @@ Utilizando uma base de imagens com 37358 imagens, sendo 36000 imagens novas, ger
     \begin{tabular}[c]{@{}l@{}}Ooutra cnn augumentada, \\ batch\_size=32, epochs=100, \\ image=32x32\end{tabular}    & 1.30          & 0.72              & 231.25                           \\ \hline
     \begin{tabular}[c]{@{}l@{}}Outra cnn augumentada, \\ batch\_size=64, epochs=160, \\ image=48x48\end{tabular}    & 0.60          & 0.89              & 465.77                           \\ \hline
   \end{tabular}
-  \caption{Resultados para outra CNN}
+  \caption{Resultados para outra CNN com dados augumentados}
   \label{tab:experiment_simple_cnn_results}
 \end{table}
+
+Os gráficos de acurácia e perda com o melhor desempenho.
+
+\clearpage
 
 \begin{figure}[!htb]
 \centering
@@ -361,45 +364,50 @@ Utilizando uma base de imagens com 37358 imagens, sendo 36000 imagens novas, ger
 \caption{\label{fig:grafico01}Acurácia e perda comparadas com treinamento e validação}
 \end{figure}
 
+O gráfico da matriz de confusão com o melhor desempenho.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{images/cm_simple_cnn_augmented.pdf}
-\caption{\label{fig:grafico01}Matrix de confusão}
+\caption{\label{fig:grafico01}Matriz de confusão}
 \end{figure}
 
 \clearpage
 
 \section{Conclusão dos experimentos}
 
-A primeira conclusão é que os dados de treino não são suficientes para aumentar a acurácia da validação.
+A primeira conclusão é que inicialmente os dados de treino não eram suficientes para aumentar a acurácia da validação.
 
-Os parâmetros que mais afetaram o desempenho das CNNs foram o tamanho do lote, batch\_size, e o tamanho da imagem. Inicialmente a LeNet-5 contava com tamanho 28x28, mas normalmente ela é utilizada com tamanho 32x32, nos testes realizados o desempenho aumentou quando o recorte chegou ao tamanho 50x50.
+Os parâmetros que mais afetaram o desempenho das CNNs foram o tamanho do lote (batch\_size) e o tamanho da imagem. Originalmente a LeNet-5 trabalhava com tamanho da imagem 28x28, mas normalmente ela é utilizada com tamanho 32x32, nos testes realizados o desempenho aumentou quando o recorte chegou ao tamanho 50x50.
 
-No caso da outra CNN, o melhor recorte de imagem encontrado foi 48x48, com lotes de 128 para treinamento da rede. Como lotes grandes tem a tendência de overfitting, a estratégia estava em diminuir o tamanho das épocas.
+No caso da Ooutra CNN, o melhor recorte de imagem encontrado foi 48x48, com lotes de 128 para treinamento da rede. Como lotes grandes tem a tendência de overfitting, a estratégia estava em diminuir o tamanho das épocas.
 
-Um problema comum ao modelo sendo treinado, é que dado o número longo de épocas, o modelo pode entrar em overfitting o que por sua vez aumenta a métrica loss da validação.
+Um problema comum ao modelo sendo treinado, é que dado um número elevado de épocas, o modelo pode entrar em overfitting o que causa perda (loss) na validação.
 
 Com os dados gerados através da técnica de augumentação os modelos conseguiram aumentar sua acurácia, tanto para LeNet-5, quanto a Outra CNN.
 
-Acredito que dois filtros poderiam melhorar os resultados. Um deles que pudesse deixar a imagem mais clara ou escura, e outro filtro que pudesse incluir ruídos diretamente nas linhas, apagando partes do traço, para tentar reproduzir uma caneta falhando ou os saltos da escrita das letras que podem variar de pessoa para pessoa.
+A adição de outros dois filtros poderiam melhorar os resultados. Um deles que pudesse deixar a imagem mais clara ou escura, e outro filtro que pudesse incluir ruídos diretamente nas linhas, apagando partes do traço, para tentar reproduzir uma caneta falhando ou os saltos da escrita das letras que podem variar de pessoa para pessoa.
 
 O parâmetro que se mostrou mais prejudicial a sua alteração foi a função de ativação. Por isso os testes seguem a estratégia da rede original. Alguns testes mostraram que o simples fato de alterar a função de ativação nas camadas de aprendizado, causava um impacto tão negativo que muitas vezes o modelo não conseguia sair de 10\% de acurácia.
 
 \section{Duas redes pré-treinadas na ImageNet}
 
+As CNNs escolhidas para essa etapa são a Inception-v4 e a VGG16.
+
 \subsection{CNN Inception-v4}
 
 Para esse experimento, utilizou-se a CNN Inception v4 com os pesos de uma rede pré-treinada.
 
-Para garantir que as camadas não sejam treinadas, mantendo assim os pesos originais foi utilizado o código:
+Para garantir que as camadas não sejam treinadas, mantendo assim os pesos originais foi utilizado o código abaixo.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
+\begin{lstlisting}[caption={Código utilizado para garantir que as camadas da CNN não sejam treinadas},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
 for l in model.layers: 
     if l is not None: l.trainable = False
 \end{lstlisting}
 
 O melhor resultado com as 1578 imagens originais.
+
+\clearpage
 
 \begin{table}[!htb]
   \centering
@@ -412,19 +420,21 @@ O melhor resultado com as 1578 imagens originais.
   \label{tab:experiment_simple_cnn_results}
 \end{table}
 
+O gráfico da matriz de confusão com o melhor desempenho para Inception-v4.
+
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{images/cm_inception_v4.pdf}
-\caption{\label{fig:grafico01}Matrix de confusão}
+\caption{\label{fig:grafico01}Matriz de confusão}
 \end{figure}
 
 \subsection{CNN VGG16}
 
-Para esse experimento, utilizou-se a CNN VGG16 da ImageNet com os pesos de uma rede pré-treinada ``imagenet''.
+Para esse experimento, utilizou-se a CNN VGG16 da ImageNet com os pesos de uma rede pré-treinada ``ImageNet''.
 
-A CNN VGG16 carregada direto da biblioteca é um modelo funcional, portanto é necessário modificar sua entrada e sua saída para aceitar parâmetros diferentes. Por isso, um novo método para carregar a CNN foi criado, já que a original tem 1000 classes e estamos utilizando para 12 classes. Mesmo sem essa modificação, é possível fazer o predict das classes, mas ficará esparsa em uma matriz de 1000, tornando o método para gerar a matriz de confusão incompatível, já que os labels tem 12 níveis apenas.
+A CNN VGG16 carregada direto da biblioteca é um modelo funcional, portanto é necessário modificar sua entrada e sua saída para aceitar parâmetros diferentes. Por isso, um novo método para carregar a CNN foi criado, já que a original tem 1000 classes e estamos utilizando para 12 classes. Mesmo sem essa modificação, é possível fazer o predict das classes, mas ficará esparsa em uma matriz de 1000, tornando o método para gerar a matriz de confusão incompatível, já que os labels tem 12 níveis apenas. O código abaixo apresenta o método utilizado para gerar o modelo pronto para ser compilado.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
+\begin{lstlisting}[caption={Função para carregar o modelo da VGG16},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
 
 def vgg16(img_rows, img_cols, num_classes):
   #Get back the convolutional part of a VGG network trained on ImageNet
@@ -446,13 +456,13 @@ def vgg16(img_rows, img_cols, num_classes):
   #In the summary, weights and layers from VGG part will be hidden, but they will be fit during the training
   # my_model.summary()
 
-  # Say not to train first layer (ResNet) model. It is already trained
+  # Say no to train first layer model. It is already trained
   for l in model.layers:
     if l is not None: l.trainable = False
   return model
 \end{lstlisting}
 
-A matriz de confusão para o experimento utilizando os valores padrões.
+Os resultados para Loss e Acurácia e Tempo de Execução podem ser vistos na tabela abaixo.
 
 \begin{table}[!htb]
   \centering
@@ -465,23 +475,29 @@ A matriz de confusão para o experimento utilizando os valores padrões.
   \label{tab:experiment_simple_cnn_results}
 \end{table}
 
+A matriz de confusão para o experimento utilizando os valores padrões da rede.
+
+
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=0.7\textwidth]{images/cm_vgg16.pdf}
-\caption{\label{fig:grafico01}Matrix de confusão}
+\includegraphics[width=0.5\textwidth]{images/cm_vgg16.pdf}
+\caption{\label{fig:grafico01}Matriz de confusão}
 \end{figure}
+
+\clearpage
+
 
 \section{Conclusão sobre as duas redes pré-treinadas da ImageNet}
 
 Como as duas redes foram treinadas para classificar 1000 itens, sua rede está calibrada para um propósito diferente daquela que estamos estudando. Mesmo assim, como explicado em sala de aula, a mesma pode ser utilizada para \textit{feature extraction}.
 
-Realizando os testes como instruído ocorreu um problema para trabalhar com a base augmentada, para o tamanho padrão das redes, a Inception v4, trabalha com imagens de 299 e VGG16 com 224. O que acontece é que as imagens são carregadas em memória, para um número grande de testes a memória do Colab não é suficiente para rodar os testes com dados augumentados. Outra estratégia para lidar com o problema deve ser implementada. Uma possível solução seria utilizar o método generator do Keras, que faz a carga das imagens por Batch. Verificando a estrutura do train.txt e as mudanças necessárias para criar um sistema de arquivo compatível, chegou-se a conclusão que seria preciso criar uma nova ferramenta. Devido ao grande número de atividades para criar os testes já necessários, o mesmo não foi criado. Portanto, apenas testes sem dados augumentados foram apresentados. Sem os testes, mas já reparando no resultado ruim das redes pré-treinadas, supõe-se que o resultado não seja muito diferente.
+Realizando os testes como instruído, ocorreu um problema para utilizar a base augmentada, para o tamanho padrão das imagens das redes. A Inception v4, trabalha com imagens de 299x299 e VGG16 com 224x224. A técnica para carregamento das imagens, faz alocação em memória, quando utilizadas com um recorte de 299x299, por exemplo, para um número grande de testes. Chega-se a conclusão que a memória do Colab não é suficiente para rodar os testes com dados augumentados. Outra estratégia para lidar com o problema deve ser implementada. Uma possível solução seria utilizar o método generator do Keras, que faz a carga das imagens por Batch. Verificando a estrutura do train.txt e as mudanças necessárias para criar um sistema de arquivo compatível, chegou-se a conclusão que seria preciso criar uma nova ferramenta. Devido ao grande número de atividades para criar os testes já necessários, o mesmo não foi criado. Portanto, apenas testes sem dados augumentados foram apresentados. 
 
 \section{Extração de características - \textit{Feature Extraction}}
 
-Para realizar a extração de caracteristicas faremos uso da CNN Inception v4. Mas para isso é necessário alterar o número de características de 12 para 1000, valor original para a ImageNet. O script utilizado pode ser visto na listagem abaixo.
+Para realizar a extração de caracteristicas faz-se uso da CNN Inception v4. Mas para isso é necessário alterar o número de características de 12 para 1000, valor original para a ImageNet. O script utilizado pode ser visto na listagem abaixo.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
+\begin{lstlisting}[caption={Código para extração de características},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
 ## Star Time
 checkpoint_time = get_time()
 
@@ -509,7 +525,7 @@ print('DONE')
 
 O arquivo de treino possui as imagens augumentadas e o tamanho da imagem foi alterada para 100x100, para evitar problemas de memória.
 
-O processo tomou aproximamente 67 segundos para cada lote de 1000 arquivos, resultando no total de 45 minutos para extrair as características de 37759 imagens. O arquivo final é um arquivo train.svm, qu possui um tamanho aproximado de 608MB.
+O processo tomou aproximamente 67 segundos para cada lote de 1000 arquivos, resultando no total de 45 minutos para extrair as características de 37759 imagens. O arquivo final é um arquivo train.svm, que possui um tamanho aproximado de 608MB (não compactados).
 
 Devido ao tamanho dos arquivos e a execução estar acontecendo em ambiente virtualizado, no Colab, decidiu-se apenas um lote de testes com a CNN Inception v4.
 
@@ -517,9 +533,9 @@ Devido ao tamanho dos arquivos e a execução estar acontecendo em ambiente virt
 
 Nesta etapa utiliza-se o classificador SVM para realizar a classificação das imagens.
 
-Para fazer as escolhas das melhores características utilizou-se o script abaixo. Neste script é utilizado o GridSearchCV da biblioteca do scikit learn, para executar uma validação cruzada dos parâmetros \textbf{C}, e \textbf{gamma}. Dois kernels são testados, o linear e o radial. O resultado é o melhor modelo testado contra a base de dados.
+Para fazer as escolhas das melhores características utilizou-se o código da listagem abaixo. É utilizado o GridSearchCV da biblioteca do scikit learn, para executar uma validação cruzada dos parâmetros \textbf{C}, e \textbf{gamma}. Dois kernels são testados, o linear e o radial. O resultado é o melhor modelo testado contra a base de dados.
 
-\begin{lstlisting}[caption={CNN escolhida},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
+\begin{lstlisting}[caption={Código utilizado para encontrar os melhores parâmetros},captionpos=b,frame=single,label={code:modelo_personalizado}, language=Python]
 ## Star Time
 checkpoint_time = get_time()
 
@@ -557,15 +573,15 @@ Os melhores parâmetros encontrados foram C = 1000, gamma = 0.001. A tabela abai
   \label{tab:experiment_simple_cnn_results}
 \end{table}
 
-O resultado da matriz de confusão, a seguir, mostra que todos os valores ficaram na classe 0. Isso indica que o modelo está errado, provavelmente relacionado ao número de dimensões utilizados para classificação. Mesmo com esse resultado, o tempo para avaliação é de aproximadamente 74 minutos.
+O resultado da matriz de confusão, a seguir, mostra que todos os valores preditos ficaram na classe 0. Isso indica que o modelo está errado, provavelmente relacionado ao número de dimensões utilizados para classificação. Mesmo com esse resultado, o tempo para avaliação foi de aproximadamente 74 minutos.
+
+\clearpage
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.7\textwidth]{images/cm_svm_rbf.pdf}
 \caption{\label{fig:cm_svm_rfb}Matriz de confusão}
 \end{figure}
-
-\clearpage
 
 \section{Referências}
 
